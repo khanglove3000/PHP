@@ -1,0 +1,69 @@
+<?php
+	session_start();
+	if(isset($_SESSION['user']) && isset($_SESSION['pass']))
+	{
+		if($_SESSION['user'] != 'admin' || $_SESSION['pass']!='123')
+		{
+			header('location:login.php');	
+		}
+	} 
+	else
+	{
+		header('location:login.php');	
+	}
+?>
+<?php include ("source/clsupload.php");
+$p = new myupload();
+?>
+
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+</head>
+
+<body>
+<form method="post" enctype="multipart/form-data" name="form1" id="form1">
+  Mời chọn file cần upload 
+ <input type="file" name="myfile" id="myfile">
+<input name="nut" type="submit" id="nut" value="Upload file">
+<?php 
+	switch($_POST['nut'])
+	{
+		case 'Upload file':
+		{
+			$name = $_FILES['myfile']['name'];
+			$size = $_FILES['myfile']['size'];
+			$local = $_FILES['myfile']['tmp_name'];
+			$type = $_FILES['myfile']['type'];
+			
+			echo $local;
+			if($type == 'application/pdf' && $size <= 1000000)
+			{
+				$newname=date('d-m-y')."_".$name;
+				if($p->uploadfile($local, "data", $newname) == 1)
+				{
+					echo 'Upload thành công.';
+				}
+				else
+				{
+					echo 'Upload không thành công';
+				}
+			}
+			else
+			{
+				echo 'Hệ thống chỉ cho phép upload file PDF có kích thước <=1M';	
+			}
+			break;
+		}
+			
+	}
+?>
+</form>
+<form method="post" enctype="multipart/form-data" name="form1" id="form1">
+  Mời chọn file cần upload 
+ <input type="file" name="myfile" id="myfile">
+<input name="nut" type="submit" id="nut" value="Upload file">
+</body>
+</html>
